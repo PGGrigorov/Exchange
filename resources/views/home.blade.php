@@ -1,13 +1,14 @@
 @extends('layouts.app')
 @section('content')
-@if (auth()->user() != null)
-<div class="container">
-    @if(\Session::has('message'))
 
-      <p class="alert
-      {{ Session::get('alert-class', 'alert-success') }}">{{Session::get('message') }}</p>
-      
-      @endif
+{{-- Checks if user is logged --}}
+@if (auth()->user() != null)
+
+{{-- Checks if user is blocked --}}
+@if (auth()->user()->is_blocked == 0)
+<div class="container">
+
+    {{-- Rates column --}}
     <div class="row justify-content-center">
         <div class="col-md-4">
             <div class="card mb-4">
@@ -16,6 +17,8 @@
                         <div class="col-12">
                           <p class="text-center mb-0">Latest Rates</p>
                         </div>
+
+                        {{-- Main rate for the chart --}}
                         <form class="form-inline" action="{{ route('api.filter') }}" method="get">
                             @csrf
                             <div class="form-group mb-2">
@@ -35,6 +38,7 @@
                               <label for="filter" class="col-sm-2 col-form-label">Filter</label>
                               <input type="text" class="form-control" id="filter" name="filter" placeholder="Rate name...">
                             </div>
+
                             <button type="submit" class="btn btn-primary mb-2">Filter</button>
                           </form>
                           
@@ -50,12 +54,7 @@
                 </div>
 
                 <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
-                    </div>
-                    @endif
-                    {{-- {{dd($newData)}} --}}
+        
                     @foreach ($filterData as $dt)
                     <div class="row">
                         <p>
@@ -65,7 +64,6 @@
                     @endforeach
                 </div>
                 <div class="card-body">
-                    {{-- {{ $filterData->links('pagination::bootstrap-4') }} --}}
                     {!! $filterData->appends(Request::except('page'))->render() !!}
 
                     <p>
@@ -76,6 +74,8 @@
 
 
         </div>
+
+        {{-- Chart column --}}
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">{{ __('Chart') }}</div>
@@ -87,7 +87,10 @@
                     </div>
                     @endif
 
+                    {{-- Canvas for chart.js api --}}
                     <canvas id="myChart" width="400" height="200"></canvas>
+                    
+                    {{-- Script for chart.js api  --}}
                     <script>
                        
                         var app = @json($filterJson);
@@ -158,6 +161,10 @@
     }
  </script>
 
+
+@else
+<h1 class="text-center">You are blocked</h1>
+@endif
 @else
 <script>window.location = "{{ route('login') }}";</script>
 @endif

@@ -1,3 +1,6 @@
+**Changes**
+<p>Добавени са ajax, създаване на потребител от админския панел, блокиране на потребител от админския панел</p> 
+
 **Welcome page**
 <img width="1440" alt="welcome page" src="https://user-images.githubusercontent.com/104323896/164997282-9f68d86a-0aaf-4680-8f1f-53e2508ab55b.png">
 **Login page**

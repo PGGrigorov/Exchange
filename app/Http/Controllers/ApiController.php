@@ -54,6 +54,7 @@ class ApiController extends Controller
     }
 
 
+    // Filter
     public function filter(Request $request) {
 
     $this->main_rate = $request->main_rate;
@@ -64,6 +65,7 @@ class ApiController extends Controller
     $newData = json_decode($response);
     $data = Rates::all();
     $filters = $request->query('filter');
+    
     
     if(empty(DB::table('rates')->count())) {
         foreach ($newData->conversion_rates as $key => $value) {
@@ -84,13 +86,13 @@ class ApiController extends Controller
         $id++;
     }
 
-
     if (!empty($filters)) {
         $filterData = Rates::sortable()->where('rate', 'like', '%'.$filters.'%')->paginate(30);
         $this->filters = $filters;
+
     } else 
         $filterData = Rates::sortable()->paginate(30);
-    
+      
         $filterJson = $newData->conversion_rates;
     
     return view('home', compact('filterData', 'filters', 'data', 'newData', 'filterJson'));

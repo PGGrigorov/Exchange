@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use DB;
+use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class AdminController extends Controller
 {
@@ -30,7 +32,7 @@ class AdminController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.admin_user_create');
     }
 
     /**
@@ -41,7 +43,25 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name'=>'required',
+            'email'=>'required',
+            'password'=>'required'
+        ]);
+
+    
+        $user = new User;
+        $user->name = $request->name;
+        $user->email =  $request->email;
+        
+        // Check if passwords match
+        if ($request->password != $request->password_confirmation) return back();
+        else 
+        $user->password = Hash::make($request->password); 
+
+        $user->save();
+
+        return redirect()->route('admin.home', [auth()->user()->id]);
     }
 
     /**
@@ -84,15 +104,8 @@ class AdminController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function demote($id) {
-        $user = User::find($id);
 
-        $user->is_admin = 0;
-        $user->save();
-
-        return back();
-    }
-
+    // Promote user
     public function promote($id) {
         $user = User::find($id);
         
@@ -102,14 +115,44 @@ class AdminController extends Controller
         return back();
     }
 
+    // Demote user
+    public function demote($id) {
+        $user = User::find($id);
 
+        $user->is_admin = 0;
+        $user->save();
+
+        return back();
+    }
+
+    // Delete user
     public function delete_user($id) {
         DB::table('users')->where('id', $id)->delete();
         return back();
     }
 
-    public function user_view($id) {
+    // Block user
+    public function block($id) {
 
+        $user = User::find($id);
+        $user->is_blocked = 1;
+
+        $user->save();
+        return back();
+    }
+
+    // Unblock user
+    public function unblock($id) {
+        $user = User::find($id);
+        $user->is_blocked = 0;
+
+        $user->save();
+        return back();
+    }
+
+
+    // User view
+    public function user_view($id) {
         $user = User::find($id);
         
         return view('user.user_view', compact('user'));

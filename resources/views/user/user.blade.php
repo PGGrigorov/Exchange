@@ -38,7 +38,8 @@
             <h2 class="text-center mb-0">
                 {{auth()->user()->name}}'s setings
             </h2>
-            <form action="{{ route('user.update', auth()->user()->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('user.update', auth()->user()->id) }}" method="POST" name="user_update"
+                id="user_update" enctype="multipart/form-data">
                 @csrf
                 {{-- Name --}}
                 <div class="form-group p-2">
@@ -82,10 +83,70 @@
         </div>
     </div>
 </div>
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+<script>
+    if ($("#user_update").length > 0) {
+        $("#user_update").validate({
+                rules: {
+                    name: {
+                        required: false,
+                        maxlength: 50
+                    },
+                    email: {
+                        required: false,
+                        maxlength: 100,
+                        email: true,
+                    },
+                    password: {
+                        required: false,
+                        maxlength: 300
+                    },
+                    avatar: {
+                        required: false,
+                    },
+                    messages: {
+                        name: {
+                            maxlength: "Your name maxlength should be 50 characters long."
+                        },
+                        email: {
+                            email: "Please enter valid email",
+                            maxlength: "The email name should less than or equal to 100 characters",
+                        },
+                    },
+                    submitHandler: function (form) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }
+                        });
+                        $('#submit').html('Please Wait...');
+                        $("#submit").attr("disabled", true);
+                        $.ajax({
+                            url: "{{url('user')}}",
+                            type: "POST",
+                            data: $('#contactUsForm').serialize(),
+                            success: function (response) {
+                                $('#submit').html('Submit');
+                                $("#submit").attr("disabled", false);
+                                alert('Ajax form has been submitted successfully');
+                                document.getElementById("contactUsForm").reset();
+                            }
+                        });
+                    }
+                })
+        }
+    }
+</script>
 @else
 
 {{-- If user is not logged --}}
-<script>window.location = "{{ route('login') }}";</script>
+<script>
+    window.location = "{{ route('login') }}";
+
+</>
 @endif
 
 @endsection

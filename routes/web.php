@@ -56,6 +56,18 @@ Route::get('/admin/demote/${id}', [AdminController::class, 'demote'])->name('adm
 // Delete user
 Route::get('/admin/delete/user/${id}', [AdminController::class, 'delete_user'])->name('admin.delete.user');
 
+// Create user
+Route::get('/admin/create/user', [AdminController::class, 'create'])->name('admin.create');
+
+// Store new user
+Route::post('/admin/store/user', [AdminController::class, 'store'])->name('admin.store');
+
+// Block user
+Route::get('/admin/block/user/${id}', [AdminController::class, 'block'])->name('admin.block');
+
+// Unblock user
+Route::get('/admin/unblock/user/${id}', [AdminController::class, 'unblock'])->name('admin.unblock');
+
 
 /* end Admin routes */
 
