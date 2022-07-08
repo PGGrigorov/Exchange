@@ -19,7 +19,7 @@
 
 **Windows**
 ====================
-1. Clone the project
+1. Clone the project: git clone https://github.com/PGGrigorov/Exchange.git
 2. Go to the folder application using cd command on your cmd or terminal
 3. Run composer install on your cmd or terminal
 4. Copy .env.example file to .env on the root folder:
